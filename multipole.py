@@ -149,9 +149,9 @@ class Multipole():
         phi_p_z = self.compute_phi(r, z, 0, dz)
         # phi = 1/total_area(sum(phi(x_face)*area))
 
-        area_m_r = np.pi*(r-dr)**2*dz
+        area_m_r = 2*np.pi*(r-dr)*dz
         area_m_z = np.pi*((r+dr)**2-(r-dr)**2)
-        area_p_r = np.pi*(r+dr)**2*dz
+        area_p_r = 2*np.pi*(r+dr)*dz
         area_p_z = np.pi*((r+dr)**2-(r-dr)**2)
         total_area = area_m_r+area_m_z+area_p_r+area_p_z
 
