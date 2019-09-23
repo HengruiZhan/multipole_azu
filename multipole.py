@@ -244,14 +244,12 @@ class Multipole():
                 for j in range(self.g.nz):
                     inmask = self.radius <= radius[i, j]
                     outmask = self.radius > radius[i, j]
-
                     # equation 20
                     # buggy
-
-                    phi_zone[i, j] += sc.G * (np.sum(self.m_r[inmask]) *
+                    phi_zone[i, j] += sc.G * (np.sum(self.m_r[l][inmask]) *
                                               np.conj(I_lm[i, j]) +
                                               np.conj(np.sum(
-                                                  self.m_i[outmask])) *
+                                                  self.m_i[l][outmask])) *
                                               R_lm[i, j])
 
         return -np.real(phi_zone)
