@@ -7,3 +7,9 @@ expansion center.
 
 When doing the expansion, one should first creat a multipole class object, m. Then use the m.compute_expansion method with
 density distribution as argument. Then use the m.phi() method to get the potential of a single point.
+
+The L2_difference.py contains the L2_diff(analytical_phi, approximate_phi, grid) function, where analytical_phi is the
+analytical potential and the approximate_phi is the approximated potential. This function compute the L2 error
+
+comparitive_difference.py contains the class comp_diff, which can be created with apotential, the analytical potential,
+and approximated potential. The member comp_diff.difference is the comparative normalized error
