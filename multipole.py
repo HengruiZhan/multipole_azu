@@ -4,8 +4,8 @@ import scipy.constants as sc
 from scipy.special import sph_harm
 
 
+"""
 class Multipole():
-    # def __init__(self, grid, n_moments, dr, center=(0.0, 0.0)):
     def __init__(self, grid, n_moments, dr, center=(0.0, 0.0)):
 
         self.g = grid
@@ -138,7 +138,7 @@ class Multipole():
         return -np.real(phi_zone)
 
     def phi_point(self, r, z):
-        """calculate the potential of a specific point"""
+        #calculate the potential of a specific point
         dr = self.g.dr/2
         dz = self.g.dz/2
 
@@ -161,15 +161,6 @@ class Multipole():
         phi_p_z_area = phi_p_z*area_p_z
         phi = (phi_m_r_area+phi_m_z_area+phi_p_r_area+phi_p_z_area)/total_area
 
-        return phi
-
-    """
-    @jit
-    def phi(self):
-        phi = self.g.scratch_array()
-        for i in range(self.g.nr):
-            for j in range(self.g.nz):
-                phi[i, j] = self.phi_point(self.g.r[i], self.g.z[j])
         return phi
         """
     
