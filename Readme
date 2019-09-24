@@ -1,0 +1,9 @@
+The grid class in the grid.py create a array coordinates of grid cell center
+
+The multipole class in the multipole.py is used to do the multipole expansion. In the 2-d case, one can just calculate the 
+potential with brute force. Here, I simulate the MacLaurin Spheroid with the brute force codes. One can just initiate it with
+grid, the class of the array of grid cell center, and n_moments, the largest l value of the expansion, and center, the 
+expansion center.
+
+When doing the expansion, one should first creat a multipole class object, m. Then use the m.compute_expansion method with
+density distribution as argument. Then use the m.phi() method to get the potential of a single point.
