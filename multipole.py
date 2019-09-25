@@ -167,7 +167,6 @@ class Multipole():
     
     #brute force version of multipole expansion
     class Multipole():
-    # def __init__(self, grid, n_moments, dr, center=(0.0, 0.0)):
     def __init__(self, grid, n_moments, center=(0.0, 0.0)):
 
         self.g = grid
@@ -186,7 +185,7 @@ class Multipole():
     @jit
     def compute_expansion(self, rho):
         # rho is density that lives on a grid self.g
-
+        """
         # loop over cells
         for i in range(self.g.nr):
             for j in range(self.g.nz):
@@ -207,6 +206,24 @@ class Multipole():
                     # assign to the the  inner or outer moment functions
                     self.m_r[l][i, j] = R_lm * m_zone
                     self.m_i[l][i, j] = I_lm * m_zone
+                    """
+        radius = np.sqrt((self.g.r2d - self.center[0])**2 +
+                         (self.g.z2d - self.center[1])**2)
+        # tan(theta) = r/z
+        theta = np.arctan2(self.g.r2d, self.g.z2d)
+        m_zone = rho * self.g.vol
+        # loop over the multipole moments, l (m = 0 here)
+        for l in range(self.n_moments+1):
+            # compute Y_l^m (note: we use theta as the polar
+            # angle, scipy is opposite)
+            Y_lm = sph_harm(0, l, 0.0, theta)
+
+            R_lm = np.sqrt(4*np.pi/(2*l + 1)) * radius**l * Y_lm
+            I_lm = np.sqrt(4*np.pi/(2*l + 1)) * Y_lm / radius**(l+1)
+
+            # assign to the the  inner or outer moment functions
+            self.m_r[l] = R_lm * m_zone
+            self.m_i[l] = I_lm * m_zone
 
     @jit
     def compute_phi_face(self, dr, dz):
@@ -236,7 +253,6 @@ class Multipole():
                     inmask = self.radius <= radius[i, j]
                     outmask = self.radius > radius[i, j]
                     # equation 20
-                    # buggy
                     phi_zone[i, j] += sc.G * (np.sum(self.m_r[l][inmask]) *
                                               np.conj(I_lm[i, j]) +
                                               np.conj(np.sum(
@@ -251,8 +267,6 @@ class Multipole():
         dr = self.g.dr/2
         dz = self.g.dz/2
 
-        phi = self.g.scratch_array()
-
         # phi_0 = self.compute_phi(r, z, 0, 0)
 
         phi_m_r = self.compute_phi_face(-dr, 0)
@@ -264,7 +278,7 @@ class Multipole():
 
         # phi = 1/total_area(sum(phi(x_face)*area))
         # compute the areas in different direction
-
+        """
         area_m_r = self.g.scratch_array()
         area_m_z = self.g.scratch_array()
         area_p_r = self.g.scratch_array()
@@ -281,6 +295,13 @@ class Multipole():
                                         (self.g.r2d[i, j]-dr)**2)
                 total_area[i, j] = area_m_r[i, j]+area_m_z[i, j] +\
                     area_p_r[i, j]+area_p_z[i, j]
+                    """
+        area_m_r = 2*np.pi*(self.g.r2d-dr)*dz
+        area_m_z = np.pi*((self.g.r2d+dr)**2 - (self.g.r2d-dr)**2)
+        area_p_r = 2*np.pi*(self.g.r2d+dr)*dz
+        area_p_z = np.pi*((self.g.r2d+dr)**2 - (self.g.r2d-dr)**2)
+        total_area = area_m_r+area_m_z +\
+            area_p_r+area_p_z
 
         phi_m_r_area = phi_m_r*area_m_r
         phi_m_z_area = phi_m_z*area_m_z
